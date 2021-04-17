@@ -1,0 +1,5 @@
+We have 1 unique largest strand.
+The length of the strand is 27648.
+Files are Sample.2 and Sample.3.
+Offset in Smaple.2 is [3073.0, 30720].
+Offset in Smaple.3 is [17409.0, 45056].
