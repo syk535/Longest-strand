@@ -78,9 +78,6 @@ num_pairs=len(pairs[0])
 num_unique_largest_strand=1
 files_selected=[i+1 for i in pairs]
 place_selected=int(files_selected[0][0]*(2*total-1)/2-files_selected[0][0]**2/2+files_selected[1][0]-total-1)
-#if num_pairs>1:
-#    for i in range(1,num_pairs):
-#        place_selected.append(int(files_selected[0][i]*(2*total-1)/2-files_selected[0][i]**2/2+files_selected[1][i]-total-1))
 output=open('Output.txt','w')
 
 # To discuss how many pairs to achieve the largest length and whether these longest strands are the same.
