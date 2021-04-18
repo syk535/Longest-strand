@@ -70,53 +70,58 @@ for num_1  in range(total-1):
         max_all[num_1,num_2]=max_i
         place_all.append(place_i)
 
+
 # Analyze the longest strands between all pairs of files
 max_len=max_all.max()
 pairs=np.where(max_all==max_len)
 num_pairs=len(pairs[0])
 num_unique_largest_strand=1
-files_selected=[pairs[0][0]+1,pairs[1][0]+1]
+files_selected=[i+1 for i in pairs]
+place_selected=int(files_selected[0][0]*(2*total-1)/2-files_selected[0][0]**2/2+files_selected[1][0]-total-1)
+#if num_pairs>1:
+#    for i in range(1,num_pairs):
+#        place_selected.append(int(files_selected[0][i]*(2*total-1)/2-files_selected[0][i]**2/2+files_selected[1][i]-total-1))
 output=open('Output.txt','w')
 
 # To discuss how many pairs to achieve the largest length and whether these longest strands are the same.
 # If we have multiple distinct longest strands, it will show the corresponding files and offets, respectively.
 if num_pairs==1 and len(place_all[place_selected])==1:
-    place_selected=int(files_selected[0]*(2*total-1)/2-files_selected[0]**2/2+files_selected[1]-11)
-    offset_1=[place_all[place_selected][0][0]-max_len+2,place_all[place_selected][0][0]+1]
-    offset_2=[place_all[place_selected][0][1]-max_len+2,place_all[place_selected][0][1]+1]
+    offset_1=[int(place_all[place_selected][0][0]-max_len+2),place_all[place_selected][0][0]+1]
+    offset_2=[int(place_all[place_selected][0][1]-max_len+2),place_all[place_selected][0][1]+1]
     output.write('We have '+str(num_unique_largest_strand)+' unique largest strand.'+'\n')
     output.write('The length of the strand is '+str(int(max_len))+'.'+'\n')
-    output.write('Files are Sample.'+str(files_selected[0])+' and Sample.'+str(files_selected[1])+'.'+'\n')
-    output.write("Offset in Smaple."+str(files_selected[0])+" is "+str(offset_1)+'.'+'\n')
-    output.write("Offset in Smaple."+str(files_selected[1])+" is "+str(offset_2)+'.')
+    output.write('Files are Sample.'+str(files_selected[0][0])+' and Sample.'+str(files_selected[1][0])+'.'+'\n')
+    output.write("Offset in Smaple."+str(files_selected[0][0])+" is "+str(offset_1)+'.'+'\n')
+    output.write("Offset in Smaple."+str(files_selected[1][0])+" is "+str(offset_2)+'.')
 else:
     g=len(place_all[place_selected])
     strings=list()
-    offset=[[['Sample.'+str(pairs[0][0]+1),place_all[place_selected][0][0]-max_len+2,place_all[place_selected][0][0]+1]]]
-    offset[0].append(['Sample.'+str(pairs[1][0]+1),place_all[place_selected][0][1]-max_len+2,place_all[place_selected][0][1]+1])
-    string.append(sample[files_selected[0]-1][int(offset_1[0]-1):int(offset_1[1])])
+    offset=[[['Sample.'+str(pairs[0][0]+1),int(place_all[place_selected][0][0]-max_len+2),place_all[place_selected][0][0]+1]]]
+    offset[0].append(['Sample.'+str(pairs[1][0]+1),int(place_all[place_selected][0][1]-max_len+2),place_all[place_selected][0][1]+1])
+    strings.append(sample[files_selected[0][0]-1][int(offset[0][0][1]-1):int(offset[0][0][2])])
     for i in range(1,g):
-        offset1_new=['Sample.'+str(pairs[0][0]+1),place_all[place_selected][i][0]-max_len+2,place_all[place_selected][i][0]+1]
-        offset2_new=['Sample.'+str(pairs[1][0]+1),place_all[place_selected][i][1]-max_len+2,place_all[place_selected][i][1]+1]
+        offset1_new=['Sample.'+str(pairs[0][0]+1),int(place_all[place_selected][i][0]-max_len+2),place_all[place_selected][i][0]+1]
+        offset2_new=['Sample.'+str(pairs[1][0]+1),int(place_all[place_selected][i][1]-max_len+2),place_all[place_selected][i][1]+1]
         if_in=0
-        string_new=sample[files_selected[0]-1][int(offset1_new[1]-1):int(offset1_new[2])]
+        string_new=sample[files_selected[0][0]-1][int(offset1_new[1]-1):int(offset1_new[2])]
         for j in range(len(strings)):
             if string_new==strings[j]:
                 offset[j].append(offset1_new)
                 offset[j].append(offset2_new)
                 if_in=1
                 break
-        if if_in==1:
-            offset.append([offset1_new])
-            offset.append([offset2_new])
+        if if_in==0:
+            offset_new=[offset1_new,offset2_new]
+            offset.append(offset_new)
             strings.append(string_new)
     for k in range(1,num_pairs):
         files_selected=[pairs[0][k]+1,pairs[1][k]+1]
-        place_selected=int(files_selected[0]*(2*total-1)/2-files_selected[0]**2/2+files_selected[1]-11)
+        place_selected=int(files_selected[0]*(2*total-1)/2-files_selected[0]**2/2+files_selected[1]-total-1)
         g=len(place_all[place_selected])
+        if_in=0
         for i in range(g):
-            offset1_new=['Sample.'+str(pairs[0][k])+1,place_all[place_selected][i][0]-max_len+2,place_all[place_selected][i][0]+1]
-            offset2_new=['Sample.'+str(pairs[1][k])+1,place_all[place_selected][i][1]-max_len+2,place_all[place_selected][i][1]+1]
+            offset1_new=['Sample.'+str(pairs[0][k]+1),int(place_all[place_selected][i][0]-max_len+2),place_all[place_selected][i][0]+1]
+            offset2_new=['Sample.'+str(pairs[1][k]+1),int(place_all[place_selected][i][1]-max_len+2),place_all[place_selected][i][1]+1]
             if_in=0
             string_new=sample[files_selected[0]-1][int(offset1_new[1]-1):int(offset1_new[2])]
             for j in range(len(strings)):
@@ -125,19 +130,26 @@ else:
                     offset[j].append(offset2_new)
                     if_in=1
                     break
-            if if_in==1:
-                offset.append([offset1_new])
-                offset.append([offset2_new])
+            if if_in==0:
+                offset_new=[offset1_new,offset2_new]
+                offset.append(offset_new)
                 strings.append(string_new)
-    num_unique_largest_strand=len(string)   
+    num_unique_largest_strand=len(strings)   
     output.write('We have '+str(num_unique_largest_strand)+' unique largest strand(s).'+'\n')
-    output.wirte('The length of the strand(s) is '+str(max_len)+'.'+'\n')
-    output.wirte('Different unique largest strands with corresponding file names and offsets are the following:'+'\n')
-    output.wirte(offset)
+    output.write('The length of the strand(s) is '+str(int(max_len))+'.'+'\n')
+    output.write('Different unique largest strands with corresponding file names and offsets are the following:'+'\n')
+    for i in range(len(offset)):
+        test_set=list()
+        output.write("No."+str(i+1)+" Strand: ")
+        for j in range(len(offset[i])):
+            if offset[i][j] not in test_set:
+                output.write(str(offset[i][j]))                         
+                test_set.append(offset[i][j])
+        output.write("."+"\n")
 
 ##For our samples, only one pair achieve the largest length, and only one sub-strand in each file attain the length, which is the simplest condition.
 
-##To test if two sub-strands are the same and achieve the largest length.
-assert(len(sample[files_selected[0]-1][int(offset_1[0]-1):int(offset_1[1])])==max_len)
-assert(sample[files_selected[0]-1][int(offset_1[0]-1):int(offset_1[1])]==sample[files_selected[1]-1][int(offset_2[0]-1):int(offset_2[1])])
+##To test if two sub-strands are the same and achieve the largest length for our samples.
+assert(len(sample[files_selected[0][0]-1][int(offset_1[0]-1):int(offset_1[1])])==max_len)
+assert(sample[files_selected[0][0]-1][int(offset_1[0]-1):int(offset_1[1])]==sample[files_selected[1][0]-1][int(offset_2[0]-1):int(offset_2[1])])
 
